@@ -25,7 +25,9 @@ var (
 
 // Use set gin metrics middleware
 func (m *Monitor) Use(r gin.IRoutes) {
-	m.initGinMetrics()
+	m.once.Do(func() {
+		m.initGinMetrics()
+	})
 
 	r.Use(m.monitorInterceptor)
 	r.GET(m.metricPath, func(ctx *gin.Context) {
@@ -37,7 +39,9 @@ func (m *Monitor) Use(r gin.IRoutes) {
 // It can be called multiple times to intercept from multiple gin.IRoutes
 // http path is not set, to do that use Expose function
 func (m *Monitor) UseWithoutExposingEndpoint(r gin.IRoutes) {
-	m.initGinMetrics()
+	m.once.Do(func() {
+		m.initGinMetrics()
+	})
 	r.Use(m.monitorInterceptor)
 }
 

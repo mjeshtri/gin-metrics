@@ -17,6 +17,8 @@ func init() {
 }
 
 func TestMiddlewareSamePort(t *testing.T) {
+	t.Parallel()
+
 	r := newRouter()
 
 	ts := httptest.NewServer(r)
@@ -44,6 +46,8 @@ func TestMiddlewareSamePort(t *testing.T) {
 }
 
 func TestMiddlewareDifferentPort(t *testing.T) {
+	t.Parallel()
+
 	appRouter, metricsRouter := newRouterSeparateMetrics()
 
 	ts := httptest.NewServer(appRouter)

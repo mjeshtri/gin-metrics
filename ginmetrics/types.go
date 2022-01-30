@@ -36,6 +36,8 @@ var (
 
 // Monitor is an object that uses to set gin server monitor.
 type Monitor struct {
+	mu          sync.Mutex
+	once        sync.Once
 	slowTime    int32
 	metricPath  string
 	reqDuration []float64
@@ -105,6 +107,9 @@ func (m *Monitor) SetMetricSuffix(suffix string) {
 
 // AddMetric add custom monitor metric.
 func (m *Monitor) AddMetric(metric *Metric) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
 	if _, ok := m.metrics[metric.Name]; ok {
 		return errors.Errorf("metric '%s' exists", metric.Name)
 	}
