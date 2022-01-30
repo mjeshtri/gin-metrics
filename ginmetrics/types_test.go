@@ -3,6 +3,8 @@ package ginmetrics
 import (
 	"sync"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestSingletonRacing(t *testing.T) {
@@ -17,4 +19,29 @@ func TestSingletonRacing(t *testing.T) {
 	}
 
 	wg.Wait()
+}
+
+func TestAddMetrics(t *testing.T) {
+	t.Parallel()
+
+	m := GetMonitor()
+	metric := Metric{
+		Labels: nil,
+	}
+
+	err := m.AddMetric(&metric)
+	require.EqualError(t, err, "metric name cannot be empty")
+
+	// add the name
+	metric.Name = metricRequestTotal
+	err = m.AddMetric(&metric)
+	require.EqualError(t, err, "metric type '0' is not recognized")
+
+	// add a known metric type
+	metric.Type = Counter
+	err = m.AddMetric(&metric)
+	require.NoError(t, err)
+
+	err = m.AddMetric(&metric)
+	require.EqualError(t, err, "metric 'gin_request_total' exists")
 }

@@ -106,11 +106,11 @@ func (m *Monitor) SetMetricSuffix(suffix string) {
 // AddMetric add custom monitor metric.
 func (m *Monitor) AddMetric(metric *Metric) error {
 	if _, ok := m.metrics[metric.Name]; ok {
-		return errors.Errorf("metric '%s' is existed", metric.Name)
+		return errors.Errorf("metric '%s' exists", metric.Name)
 	}
 
 	if metric.Name == "" {
-		return errors.Errorf("metric name cannot be empty.")
+		return errors.Errorf("metric name cannot be empty")
 	}
 	if f, ok := promTypeHandler[metric.Type]; ok {
 		if err := f(metric); err == nil {
@@ -119,7 +119,7 @@ func (m *Monitor) AddMetric(metric *Metric) error {
 			return nil
 		}
 	}
-	return errors.Errorf("metric type '%d' not existed.", metric.Type)
+	return errors.Errorf("metric type '%d' is not recognized", metric.Type)
 }
 
 func counterHandler(metric *Metric) error {
